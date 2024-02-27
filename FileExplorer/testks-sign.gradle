@@ -1,0 +1,23 @@
+// 1、在壳工程build.gradle 里加上 apply from: "testks-sign.gradle"
+// 2、删除壳工程build.gradle 的 buildTypes 配置，由这里统一配置
+android {
+    signingConfigs {
+        sign {
+            storeFile file("testks.jks")
+            storePassword "testks"
+            keyAlias "testks"
+            keyPassword "testks"
+        }
+    }
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.sign
+        }
+        release {
+            minifyEnabled true
+            shrinkResources true
+            signingConfig signingConfigs.sign
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+}

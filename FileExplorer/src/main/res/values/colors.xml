@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="color_theme">#000000</color>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="icon_dir">#FFBB00</color>
+    <color name="icon_file">#999999</color>
+    <color name="bg_file_item_n">@color/white</color>
+    <color name="bg_file_item_p">#EEEEEE</color>
+</resources>

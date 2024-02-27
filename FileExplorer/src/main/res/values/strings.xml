@@ -1,0 +1,12 @@
+<resources>
+    <string name="app_name">文件管理</string>
+    <string name="dialog_storage_message">文件管理需要存储权限。</string>
+    <string name="dialog_need_uri_permission_message">浏览Android/data、Android/obb目录需要授权。</string>
+    <string name="dialog_button_request_permission">去授权</string>
+    <string name="dialog_button_cancel">取消</string>
+    <string name="file_item_icon_txt_dir">文件夹</string>
+    <string name="file_item_icon_txt_file">文件</string>
+    <string name="toast_permission_granted">授权成功</string>
+    <string name="toast_permission_not_granted">授权失败</string>
+    <string name="toast_press_back_again_to_exit">再次点击退出应用</string>
+</resources>

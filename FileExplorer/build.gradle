@@ -1,0 +1,46 @@
+plugins {
+    id 'com.android.application'
+    id 'org.jetbrains.kotlin.android'
+}
+
+apply from: "testks-sign.gradle"
+
+android {
+    namespace 'com.magicianguo.fileexplorer'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId "com.magicianguo.fileexplorer"
+        minSdk 23
+        targetSdk 34
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        viewBinding true
+    }
+}
+
+dependencies {
+
+    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'com.google.android.material:material:1.10.0'
+
+    def shizuku_version = "13.1.5"
+    implementation "dev.rikka.shizuku:api:$shizuku_version"
+    // Add this line if you want to support Shizuku
+    implementation "dev.rikka.shizuku:provider:$shizuku_version"
+    // 用于绕过隐藏api的调用限制
+    implementation "org.lsposed.hiddenapibypass:hiddenapibypass:4.3"
+    // 一定要加上这条依赖，SDK自带的documentfile接口有问题
+    implementation "androidx.documentfile:documentfile:1.0.1"
+}
