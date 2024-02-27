@@ -19,7 +19,7 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         sApp = this;
-        addHiddenApiExemptions();
+//        addHiddenApiExemptions();
         createFile();
     }
 

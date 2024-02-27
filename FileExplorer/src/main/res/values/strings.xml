@@ -9,4 +9,6 @@
     <string name="toast_permission_granted">授权成功</string>
     <string name="toast_permission_not_granted">授权失败</string>
     <string name="toast_press_back_again_to_exit">再次点击退出应用</string>
+    <string name="toast_shizuku_connected">Shizuku服务已连接</string>
+    <string name="toast_shizuku_disconnected">Shizuku服务已断开</string>
 </resources>

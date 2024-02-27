@@ -14,6 +14,7 @@ import androidx.viewbinding.ViewBinding;
 
 import com.magicianguo.fileexplorer.constant.PathType;
 import com.magicianguo.fileexplorer.constant.RequestCode;
+import com.magicianguo.fileexplorer.userservice.FileExplorerServiceManager;
 import com.magicianguo.fileexplorer.util.FileTools;
 
 import rikka.shizuku.Shizuku;
@@ -28,23 +29,13 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
         super.onCreate(savedInstanceState);
         binding = onBinding();
         setContentView(binding.getRoot());
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
         Shizuku.addRequestPermissionResultListener(this);
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        Shizuku.removeRequestPermissionResultListener(this);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
+        Shizuku.removeRequestPermissionResultListener(this);
         binding = null;
     }
 
@@ -53,6 +44,7 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
         if (requestCode == RequestCode.SHIZUKU) {
             if (grantResult == PackageManager.PERMISSION_GRANTED) {
                 FileTools.specialPathReadType = PathType.SHIZUKU;
+                FileExplorerServiceManager.bindService();
             }
         }
     }

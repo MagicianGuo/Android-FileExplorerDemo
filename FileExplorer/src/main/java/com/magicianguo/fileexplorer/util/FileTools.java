@@ -8,6 +8,7 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
+import android.os.RemoteException;
 import android.provider.DocumentsContract;
 
 import androidx.documentfile.provider.DocumentFile;
@@ -16,6 +17,7 @@ import com.magicianguo.fileexplorer.App;
 import com.magicianguo.fileexplorer.bean.BeanFile;
 import com.magicianguo.fileexplorer.constant.PathType;
 import com.magicianguo.fileexplorer.constant.RequestCode;
+import com.magicianguo.fileexplorer.userservice.IFileExplorerService;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -30,7 +32,7 @@ public class FileTools {
 
     private static final PackageManager PACKAGE_MANAGER = App.get().getPackageManager();
 
-    private static final Comparator<BeanFile> mComparator = new Comparator<BeanFile>() {
+    private static final Comparator<BeanFile> COMPARATOR = new Comparator<BeanFile>() {
         @Override
         public int compare(BeanFile o1, BeanFile o2) {
             String name1 = o1.name;
@@ -63,12 +65,17 @@ public class FileTools {
         }
     };
 
+    public static IFileExplorerService iFileExplorerService;
+
     public static List<BeanFile> getSortedFileList(String path) {
-        return CollectionsKt.sortedWith(getFileList(path), mComparator);
+        return CollectionsKt.sortedWith(getFileList(path), COMPARATOR);
     }
 
     private static List<BeanFile> getFileList(String path) {
         int type = getPathType(path);
+        if (type == PathType.SHIZUKU) {
+            return getFileListByShizuku(path);
+        }
         if (type == PathType.DOCUMENT) {
             return getFileListByDocument(path);
         }
@@ -103,6 +110,15 @@ public class FileTools {
             }
         }
         return list;
+    }
+
+    private static List<BeanFile> getFileListByShizuku(String path) {
+        try {
+            return iFileExplorerService.listFiles(path);
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+        return new ArrayList<>();
     }
 
     private static List<BeanFile> getPackageNameFileList(String path) {
@@ -227,10 +243,8 @@ public class FileTools {
 
     /**
      * 如果字符串是应用包名，返回字符串，反之返回null
-     * @param name
-     * @return
      */
-    private static String getPathPackageName(String name) {
+    public static String getPathPackageName(String name) {
         try {
             PACKAGE_MANAGER.getPackageInfo(name, 0);
             return name;
@@ -239,4 +253,5 @@ public class FileTools {
         }
         return null;
     }
+
 }

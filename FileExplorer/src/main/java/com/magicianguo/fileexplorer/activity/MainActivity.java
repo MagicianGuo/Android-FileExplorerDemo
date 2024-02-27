@@ -9,7 +9,9 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import com.magicianguo.fileexplorer.R;
 import com.magicianguo.fileexplorer.adapter.FileListAdapter;
 import com.magicianguo.fileexplorer.bean.BeanFile;
+import com.magicianguo.fileexplorer.constant.PathType;
 import com.magicianguo.fileexplorer.databinding.ActivityMainBinding;
+import com.magicianguo.fileexplorer.userservice.FileExplorerServiceManager;
 import com.magicianguo.fileexplorer.util.FileTools;
 import com.magicianguo.fileexplorer.util.PermissionTools;
 import com.magicianguo.fileexplorer.util.ToastUtils;
@@ -95,8 +97,20 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     private void checkStoragePermission() {
         if (PermissionTools.hasStoragePermission()) {
             loadPath(mPathCache, false);
+            checkShizukuPermission();
         } else {
             showStoragePermissionDialog();
+        }
+    }
+
+    private void checkShizukuPermission() {
+        if (PermissionTools.isShizukuAvailable()) {
+            if (PermissionTools.hasShizukuPermission()) {
+                FileTools.specialPathReadType = PathType.SHIZUKU;
+                FileExplorerServiceManager.bindService();
+            } else {
+                PermissionTools.requestShizukuPermission();
+            }
         }
     }
 
@@ -104,6 +118,7 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     protected void onStoragePermissionResult(boolean granted) {
         if (granted) {
             loadPath(mPathCache, false);
+            checkShizukuPermission();
         } else {
             showStoragePermissionDialog();
         }

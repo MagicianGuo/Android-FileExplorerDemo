@@ -2,8 +2,8 @@ package com.magicianguo.fileexplorer.adapter;
 
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -60,11 +60,7 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
                 fileListHolder.tvIcon.setBackgroundResource(R.drawable.bg_icon_file);
             }
             if (file.pathPackageName != null) {
-                try {
-                    fileListHolder.ivSmall.setImageDrawable(PACKAGE_MANAGER.getApplicationIcon(file.pathPackageName));
-                } catch (PackageManager.NameNotFoundException e) {
-                    e.printStackTrace();
-                }
+                fileListHolder.ivSmall.setImageDrawable(getAppIconDrawable(file));
             } else {
                 fileListHolder.ivSmall.setImageDrawable(null);
             }
@@ -79,6 +75,15 @@ public class FileListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     @Override
     public int getItemCount() {
         return mList.size();
+    }
+
+    private Drawable getAppIconDrawable(BeanFile file) {
+        try {
+            return PACKAGE_MANAGER.getApplicationIcon(file.pathPackageName);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private static class FileListHolder extends RecyclerView.ViewHolder {
