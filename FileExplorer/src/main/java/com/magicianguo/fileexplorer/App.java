@@ -1,9 +1,6 @@
 package com.magicianguo.fileexplorer;
 
 import android.app.Application;
-import android.os.Build;
-
-import org.lsposed.hiddenapibypass.HiddenApiBypass;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -19,15 +16,7 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         sApp = this;
-//        addHiddenApiExemptions();
         createFile();
-    }
-
-    private void addHiddenApiExemptions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
-            // 用于绕过隐藏api的调用限制
-            HiddenApiBypass.addHiddenApiExemptions("L");
-        }
     }
 
     private void createFile() {

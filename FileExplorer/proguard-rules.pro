@@ -19,3 +19,7 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+-keep class com.magicianguo.fileexplorer.bean.BeanFile { *; }
+-keep class com.magicianguo.fileexplorer.userservice.IFileExplorerService { *; }
+-keep class com.magicianguo.fileexplorer.userservice.FileExplorerService

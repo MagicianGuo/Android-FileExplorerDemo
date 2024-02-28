@@ -26,6 +26,7 @@ android {
         jvmTarget = '1.8'
     }
     buildFeatures {
+        buildConfig true
         aidl true
         viewBinding true
     }
@@ -40,8 +41,6 @@ dependencies {
     implementation "dev.rikka.shizuku:api:$shizuku_version"
     // Add this line if you want to support Shizuku
     implementation "dev.rikka.shizuku:provider:$shizuku_version"
-    // 用于绕过隐藏api的调用限制
-    implementation "org.lsposed.hiddenapibypass:hiddenapibypass:4.3"
     // 一定要加上这条依赖，SDK自带的documentfile接口有问题
     implementation "androidx.documentfile:documentfile:1.0.1"
 }

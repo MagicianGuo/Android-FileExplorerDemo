@@ -33,6 +33,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         checkStoragePermission();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        loadPath(mPathCache, false);
+    }
+
     private void initView() {
         binding.btnBack.setOnClickListener(v -> {
             if (!FileTools.ROOT_PATH.equals(mDirectory.getPath())) {

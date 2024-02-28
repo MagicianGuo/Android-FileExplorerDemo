@@ -14,6 +14,7 @@ import android.provider.DocumentsContract;
 import androidx.documentfile.provider.DocumentFile;
 
 import com.magicianguo.fileexplorer.App;
+import com.magicianguo.fileexplorer.R;
 import com.magicianguo.fileexplorer.bean.BeanFile;
 import com.magicianguo.fileexplorer.constant.PathType;
 import com.magicianguo.fileexplorer.constant.RequestCode;
@@ -115,7 +116,8 @@ public class FileTools {
     private static List<BeanFile> getFileListByShizuku(String path) {
         try {
             return iFileExplorerService.listFiles(path);
-        } catch (RemoteException e) {
+        } catch (NullPointerException | RemoteException e) {
+            ToastUtils.longCall(R.string.toast_shizuku_load_file_failed);
             e.printStackTrace();
         }
         return new ArrayList<>();

@@ -6,6 +6,7 @@ import android.os.IBinder;
 import android.util.Log;
 
 import com.magicianguo.fileexplorer.App;
+import com.magicianguo.fileexplorer.BuildConfig;
 import com.magicianguo.fileexplorer.R;
 import com.magicianguo.fileexplorer.util.FileTools;
 import com.magicianguo.fileexplorer.util.ToastUtils;
@@ -18,7 +19,7 @@ public class FileExplorerServiceManager {
 
     private static final Shizuku.UserServiceArgs USER_SERVICE_ARGS = new Shizuku.UserServiceArgs(
             new ComponentName(App.get().getPackageName(), FileExplorerService.class.getName())
-    ).daemon(false).debuggable(true).processNameSuffix("user_service").version(1);
+    ).daemon(false).debuggable(BuildConfig.DEBUG).processNameSuffix("file_explorer_service").version(1);
 
     private static final ServiceConnection SERVICE_CONNECTION = new ServiceConnection() {
         @Override
