@@ -12,4 +12,5 @@
     <string name="toast_shizuku_connected">Shizuku服务已连接</string>
     <string name="toast_shizuku_disconnected">Shizuku服务已断开</string>
     <string name="toast_shizuku_load_file_failed">获取失败，请重新授权Shizuku！</string>
+    <string name="toast_path_copied_to_clip">路径已复制到剪贴板</string>
 </resources>

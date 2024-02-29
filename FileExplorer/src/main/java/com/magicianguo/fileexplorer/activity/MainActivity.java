@@ -1,5 +1,8 @@
 package com.magicianguo.fileexplorer.activity;
 
+import android.content.ClipData;
+import android.content.ClipDescription;
+import android.content.ClipboardManager;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -45,6 +48,13 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             if (!FileTools.ROOT_PATH.equals(mDirectory.getPath())) {
                 loadPath(mDirectory.getParent(), true);
             }
+        });
+        binding.tvPath.setOnLongClickListener(v -> {
+            ClipboardManager manager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+            manager.setPrimaryClip(new ClipData(new ClipDescription("", new String[] {ClipDescription.MIMETYPE_TEXT_PLAIN}),
+                    new ClipData.Item(binding.tvPath.getText())));
+            ToastUtils.shortCall(R.string.toast_path_copied_to_clip);
+            return true;
         });
         binding.rvFiles.setLayoutManager(new LinearLayoutManager(this));
         mAdapter.setListener(new FileListAdapter.IItemClickListener() {
