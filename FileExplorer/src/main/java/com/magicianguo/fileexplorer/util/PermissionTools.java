@@ -22,9 +22,11 @@ public class PermissionTools {
         Context context = App.get();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             return Environment.isExternalStorageManager();
-        } else {
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             return context.checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
                     PackageManager.PERMISSION_GRANTED;
+        } else {
+            return true;
         }
     }
 
@@ -33,7 +35,7 @@ public class PermissionTools {
             Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
                     .setData(Uri.parse("package:"+activity.getPackageName()));
             activity.startActivityForResult(intent, RequestCode.STORAGE);
-        } else {
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             activity.requestPermissions(new String[] { Manifest.permission.WRITE_EXTERNAL_STORAGE } , RequestCode.STORAGE);
         }
     }
