@@ -1,5 +1,6 @@
 package com.magicianguo.fileexplorer.activity;
 
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -110,12 +111,15 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     }
 
     private void checkShizukuPermission() {
-        if (PermissionTools.isShizukuAvailable()) {
-            if (PermissionTools.hasShizukuPermission()) {
-                FileTools.specialPathReadType = PathType.SHIZUKU;
-                FileExplorerServiceManager.bindService();
-            } else {
-                PermissionTools.requestShizukuPermission();
+        // 安卓11以下不需要Shizuku，使用File接口就能浏览/sdcard全部文件
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (PermissionTools.isShizukuAvailable()) {
+                if (PermissionTools.hasShizukuPermission()) {
+                    FileTools.specialPathReadType = PathType.SHIZUKU;
+                    FileExplorerServiceManager.bindService();
+                } else {
+                    PermissionTools.requestShizukuPermission();
+                }
             }
         }
     }
