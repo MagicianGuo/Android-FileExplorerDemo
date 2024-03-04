@@ -5,22 +5,27 @@ import android.content.ClipDescription;
 import android.content.ClipboardManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.text.TextUtils;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.navigation.NavController;
+import androidx.navigation.fragment.NavHostFragment;
 
 import com.magicianguo.fileexplorer.R;
-import com.magicianguo.fileexplorer.adapter.FileListAdapter;
 import com.magicianguo.fileexplorer.bean.BeanFile;
+import com.magicianguo.fileexplorer.constant.BundleKey;
 import com.magicianguo.fileexplorer.constant.PathType;
 import com.magicianguo.fileexplorer.databinding.ActivityMainBinding;
+import com.magicianguo.fileexplorer.observer.IFileItemClickObserver;
 import com.magicianguo.fileexplorer.userservice.FileExplorerServiceManager;
 import com.magicianguo.fileexplorer.util.FileTools;
 import com.magicianguo.fileexplorer.util.PermissionTools;
 import com.magicianguo.fileexplorer.util.ToastUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -28,13 +33,22 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     private long mLastPressBackTime = 0L;
     private String mPathCache = FileTools.ROOT_PATH;
     private File mDirectory;
-    private final FileListAdapter mAdapter = new FileListAdapter();
+
+    private NavController mNavController;
+
+    private final IFileItemClickObserver mFileItemClickObserver = new IFileItemClickObserver() {
+        @Override
+        public void onClickDir(String path) {
+            loadPath(path, true);
+        }
+    };
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         initView();
         checkStoragePermission();
+        FileTools.addFileItemClickObserver(mFileItemClickObserver);
     }
 
     @Override
@@ -43,10 +57,24 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
         loadPath(mPathCache, false);
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        FileTools.removeFileItemClickObserver(mFileItemClickObserver);
+    }
+
     private void initView() {
+        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.fcv_file_list);
+        if (navHostFragment != null) {
+            mNavController = navHostFragment.getNavController();
+        }
         binding.btnBack.setOnClickListener(v -> {
             if (!FileTools.ROOT_PATH.equals(mDirectory.getPath())) {
-                loadPath(mDirectory.getParent(), true);
+                mDirectory = mDirectory.getParentFile();
+                assert mDirectory != null;
+                mPathCache = mDirectory.getPath();
+                binding.tvPath.setText(mPathCache);
+                mNavController.popBackStack();
             }
         });
         binding.tvPath.setOnLongClickListener(v -> {
@@ -56,20 +84,13 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             ToastUtils.shortCall(R.string.toast_path_copied_to_clip);
             return true;
         });
-        binding.rvFiles.setLayoutManager(new LinearLayoutManager(this));
-        mAdapter.setListener(new FileListAdapter.IItemClickListener() {
-            @Override
-            public void onClickDir(String path) {
-                loadPath(path, true);
-            }
-        });
-        binding.rvFiles.setAdapter(mAdapter);
     }
 
     private void loadPath(String path, boolean isUserClicked) {
         if (path == null) {
             return;
         }
+        boolean isNavigate = !TextUtils.equals(mPathCache, path);
         mPathCache = path;
         if (FileTools.shouldRequestUriPermission(path)) {
             if (isUserClicked) {
@@ -79,7 +100,12 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             mDirectory = new File(path);
             binding.tvPath.setText(mDirectory.getPath());
             List<BeanFile> list = FileTools.getSortedFileList(path);
-            mAdapter.updateList(list);
+            Bundle bundle = new Bundle();
+            bundle.putParcelableArrayList(BundleKey.FILE_LIST, (ArrayList<? extends Parcelable>) list);
+            if (!isNavigate) {
+                mNavController.popBackStack();
+            }
+            mNavController.navigate(R.id.fileListFragment, bundle);
         }
     }
 
@@ -156,13 +182,21 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
 
     @Override
     public void onBackPressed() {
-        long time = System.currentTimeMillis();
-        if (time - mLastPressBackTime < 2000L) {
+        if (!FileTools.ROOT_PATH.equals(mDirectory.getPath())) {
+            mDirectory = mDirectory.getParentFile();
+            assert mDirectory != null;
+            mPathCache = mDirectory.getPath();
+            binding.tvPath.setText(mPathCache);
             super.onBackPressed();
-            finish();
         } else {
-            ToastUtils.shortCall(R.string.toast_press_back_again_to_exit);
+            long time = System.currentTimeMillis();
+            if (time - mLastPressBackTime < 2000L) {
+                super.onBackPressed();
+                finish();
+            } else {
+                ToastUtils.shortCall(R.string.toast_press_back_again_to_exit);
+            }
+            mLastPressBackTime = time;
         }
-        mLastPressBackTime = time;
     }
 }

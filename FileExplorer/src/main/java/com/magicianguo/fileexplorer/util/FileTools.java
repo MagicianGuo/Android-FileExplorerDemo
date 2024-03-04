@@ -18,6 +18,7 @@ import com.magicianguo.fileexplorer.R;
 import com.magicianguo.fileexplorer.bean.BeanFile;
 import com.magicianguo.fileexplorer.constant.PathType;
 import com.magicianguo.fileexplorer.constant.RequestCode;
+import com.magicianguo.fileexplorer.observer.IFileItemClickObserver;
 import com.magicianguo.fileexplorer.userservice.IFileExplorerService;
 
 import java.io.File;
@@ -69,7 +70,9 @@ public class FileTools {
     public static IFileExplorerService iFileExplorerService;
 
     public static List<BeanFile> getSortedFileList(String path) {
-        return CollectionsKt.sortedWith(getFileList(path), COMPARATOR);
+        List<BeanFile> fileList = getFileList(path);
+        CollectionsKt.sortWith(fileList, COMPARATOR);
+        return fileList;
     }
 
     private static List<BeanFile> getFileList(String path) {
@@ -254,6 +257,22 @@ public class FileTools {
             e.printStackTrace();
         }
         return null;
+    }
+
+    private static List<IFileItemClickObserver> sFileItemClickObservers = new ArrayList<>();
+
+    public static void addFileItemClickObserver(IFileItemClickObserver observer) {
+        sFileItemClickObservers.add(observer);
+    }
+
+    public static void removeFileItemClickObserver(IFileItemClickObserver observer) {
+        sFileItemClickObservers.remove(observer);
+    }
+
+    public static void notifyClickDir(String path) {
+        for (IFileItemClickObserver observer : sFileItemClickObservers) {
+            observer.onClickDir(path);
+        }
     }
 
 }

@@ -35,12 +35,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/tv_path" />
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rv_files"
+    <androidx.fragment.app.FragmentContainerView
+        android:id="@+id/fcv_file_list"
+        android:name="androidx.navigation.fragment.NavHostFragment"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
         android:layout_marginTop="4dp"
-        android:scrollbars="vertical"
+        android:layout_height="0dp"
+        app:defaultNavHost="true"
+        app:navGraph="@navigation/nav_main_file_list"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/tv_path" />
 

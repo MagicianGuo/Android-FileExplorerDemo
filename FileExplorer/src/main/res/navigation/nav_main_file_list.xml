@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/nav_main_file_list"
+    app:startDestination="@id/emptyFragment">
+
+    <fragment
+        android:id="@+id/emptyFragment"
+        android:name="com.magicianguo.fileexplorer.fragment.EmptyFragment"
+        android:label="EmptyFragment" />
+    <fragment
+        android:id="@+id/fileListFragment"
+        android:name="com.magicianguo.fileexplorer.fragment.FileListFragment"
+        android:label="FileListFragment" />
+</navigation>
