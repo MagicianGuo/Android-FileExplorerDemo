@@ -90,12 +90,13 @@ public class FileTools {
     }
 
     private static List<BeanFile> getFileListByFile(String path) {
+        boolean isPkgNamePath = isDataPath(path) || isObbPath(path);
         List<BeanFile> list = new ArrayList<>();
         File dir = new File(path);
         File[] files;
         if ((files = dir.listFiles()) != null) {
             for (File file : files) {
-                list.add(new BeanFile(file.getName(), file.getPath(), file.isDirectory(), false, null));
+                list.add(new BeanFile(file.getName(), file.getPath(), file.isDirectory(), false, isPkgNamePath ? file.getName() : null));
             }
         }
         return list;
