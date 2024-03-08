@@ -16,6 +16,7 @@ import com.magicianguo.fileexplorer.constant.PathType;
 import com.magicianguo.fileexplorer.constant.RequestCode;
 import com.magicianguo.fileexplorer.userservice.FileExplorerServiceManager;
 import com.magicianguo.fileexplorer.util.FileTools;
+import com.magicianguo.fileexplorer.util.PermissionTools;
 
 import rikka.shizuku.Shizuku;
 
@@ -29,13 +30,17 @@ public abstract class BaseActivity<VB extends ViewBinding> extends AppCompatActi
         super.onCreate(savedInstanceState);
         binding = onBinding();
         setContentView(binding.getRoot());
-        Shizuku.addRequestPermissionResultListener(this);
+        if (PermissionTools.isShizukuAvailable()) {
+            Shizuku.addRequestPermissionResultListener(this);
+        }
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        Shizuku.removeRequestPermissionResultListener(this);
+        if (PermissionTools.isShizukuAvailable()) {
+            Shizuku.removeRequestPermissionResultListener(this);
+        }
         binding = null;
     }
 
