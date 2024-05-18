@@ -378,3 +378,33 @@ public static void bindService() {
 ```
 
 绑定之后，调用 aidl 里面的方法来管理文件即可。
+
+**2024/05/18 更新**
+
+目前发现了新的Document授权方式，能够在Android 13、14上直接授权Android/data(obb)目录。
+
+例1：Android/data目录请求授权，可使用如下Uri：
+
+```java
+    Uri.Builder uriBuilder = new Uri.Builder()
+        .scheme("content")
+        .authority("com.android.externalstorage.documents")
+        .appendPath("tree")
+        .appendPath("primary:A\u200Bndroid/data")
+        .appendPath("document")
+        .appendPath("primary:A\u200Bndroid/data");
+// 相当于 content://com.android.externalstorage.documents/tree/primary%3AA%E2%80%8Bndroid%2Fdata/document/primary%3AA%E2%80%8Bndroid%2Fdata
+```
+
+例2：Android/data/com.xxx.yyy目录请求授权，可使用如下Uri：
+
+```java
+    Uri.Builder uriBuilder = new Uri.Builder()
+        .scheme("content")
+        .authority("com.android.externalstorage.documents")
+        .appendPath("tree")
+        .appendPath("primary:A\u200Bndroid/data")
+        .appendPath("document")
+        .appendPath("primary:A\u200Bndroid/data/com.xxx.yyy");
+// 相当于 content://com.android.externalstorage.documents/tree/primary%3AA%E2%80%8Bndroid%2Fdata/document/primary%3AA%E2%80%8Bndroid%2Fdata%2Fcom.xxx.yyy
+```

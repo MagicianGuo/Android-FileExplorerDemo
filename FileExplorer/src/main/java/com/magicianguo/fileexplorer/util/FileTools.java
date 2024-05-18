@@ -10,6 +10,7 @@ import android.os.Build;
 import android.os.Environment;
 import android.os.RemoteException;
 import android.provider.DocumentsContract;
+import android.util.Log;
 
 import androidx.documentfile.provider.DocumentFile;
 
@@ -104,6 +105,7 @@ public class FileTools {
 
     private static List<BeanFile> getFileListByDocument(String path) {
         Uri pathUri = pathToUri(path);
+        Log.d("TAG", "getFileListByDocument: pathUri = "+pathUri);
         DocumentFile documentFile = DocumentFile.fromTreeUri(App.get(), pathUri);
         List<BeanFile> list = new ArrayList<>();
         if (documentFile != null) {
@@ -153,23 +155,7 @@ public class FileTools {
         if (isFromMyPackageNamePath(path)) {
             return PathType.FILE;
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (isDataPath(path) || isObbPath(path)) {
-                if (specialPathReadType == PathType.SHIZUKU) {
-                    return PathType.SHIZUKU;
-                } else {
-                    return PathType.PACKAGE_NAME;
-                }
-            } else if (isUnderDataPath(path) || isUnderObbPath(path)) {
-                if (specialPathReadType == PathType.SHIZUKU) {
-                    return PathType.SHIZUKU;
-                } else {
-                    return PathType.DOCUMENT;
-                }
-            } else {
-                return PathType.FILE;
-            }
-        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             if (isDataPath(path) || isObbPath(path) || isUnderDataPath(path) || isUnderObbPath(path)) {
                 if (specialPathReadType == PathType.SHIZUKU) {
                     return PathType.SHIZUKU;
@@ -186,9 +172,12 @@ public class FileTools {
 
     private static boolean hasUriPermission(String path) {
         List<UriPermission> uriPermissions = App.get().getContentResolver().getPersistedUriPermissions();
+        Log.d("TAG", "hasUriPermission: uriPermissions = " + uriPermissions);
         String uriPath = pathToUri(path).getPath();
+        Log.d("TAG", "hasUriPermission: uriPath = "+uriPath);
         for (UriPermission uriPermission : uriPermissions) {
             String itemPath = uriPermission.getUri().getPath();
+            Log.d("TAG", "hasUriPermission: itemPath = " + itemPath);
             if (uriPath != null && itemPath != null && (uriPath + "/").contains(itemPath + "/")) {
                 return true;
             }
@@ -218,12 +207,16 @@ public class FileTools {
                 .authority("com.android.externalstorage.documents")
                 .appendPath("tree");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            uriBuilder.appendPath("primary:Android/" + segments[1] + "/" + segments[2]);
+            uriBuilder.appendPath("primary:A\u200Bndroid/" + segments[1]);
         } else {
             uriBuilder.appendPath("primary:Android/" + segments[1]);
         }
-        uriBuilder.appendPath("document")
-                .appendPath("primary:" + halfPath);
+        uriBuilder.appendPath("document");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            uriBuilder.appendPath("primary:A\u200Bndroid/" + halfPath.replace("Android/", ""));
+        } else {
+            uriBuilder.appendPath("primary:" + halfPath);
+        }
         return uriBuilder.build();
     }
 
@@ -254,8 +247,7 @@ public class FileTools {
         try {
             PACKAGE_MANAGER.getPackageInfo(name, 0);
             return name;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
+        } catch (PackageManager.NameNotFoundException ignore) {
         }
         return null;
     }
