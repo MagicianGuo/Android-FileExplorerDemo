@@ -3,11 +3,15 @@ package com.magicianguo.fileexplorer.activity;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.ClipboardManager;
+import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.text.TextUtils;
+import android.view.Menu;
+import android.view.MenuItem;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.navigation.NavController;
@@ -22,6 +26,7 @@ import com.magicianguo.fileexplorer.observer.IFileItemClickObserver;
 import com.magicianguo.fileexplorer.userservice.FileExplorerServiceManager;
 import com.magicianguo.fileexplorer.util.FileTools;
 import com.magicianguo.fileexplorer.util.PermissionTools;
+import com.magicianguo.fileexplorer.util.SPUtils;
 import com.magicianguo.fileexplorer.util.ToastUtils;
 
 import java.io.File;
@@ -140,7 +145,9 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
     private void checkStoragePermission() {
         if (PermissionTools.hasStoragePermission()) {
             loadPath(mPathCache, false);
-            checkShizukuPermission();
+            if (!SPUtils.getUseNewDocument()) {
+                checkShizukuPermission();
+            }
         } else {
             showStoragePermissionDialog();
         }
@@ -198,5 +205,20 @@ public class MainActivity extends BaseActivity<ActivityMainBinding> {
             }
             mLastPressBackTime = time;
         }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == R.id.setting) {
+            startActivity(new Intent(this, SettingActivity.class));
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main, menu);
+        return true;
     }
 }

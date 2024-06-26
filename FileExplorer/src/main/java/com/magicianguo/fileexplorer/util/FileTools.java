@@ -155,7 +155,23 @@ public class FileTools {
         if (isFromMyPackageNamePath(path)) {
             return PathType.FILE;
         }
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && !SPUtils.getUseNewDocument()) {
+            if (isDataPath(path) || isObbPath(path)) {
+                if (specialPathReadType == PathType.SHIZUKU) {
+                    return PathType.SHIZUKU;
+                } else {
+                    return PathType.PACKAGE_NAME;
+                }
+            } else if (isUnderDataPath(path) || isUnderObbPath(path)) {
+                if (specialPathReadType == PathType.SHIZUKU) {
+                    return PathType.SHIZUKU;
+                } else {
+                    return PathType.DOCUMENT;
+                }
+            } else {
+                return PathType.FILE;
+            }
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             if (isDataPath(path) || isObbPath(path) || isUnderDataPath(path) || isUnderObbPath(path)) {
                 if (specialPathReadType == PathType.SHIZUKU) {
                     return PathType.SHIZUKU;
@@ -207,12 +223,16 @@ public class FileTools {
                 .authority("com.android.externalstorage.documents")
                 .appendPath("tree");
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            uriBuilder.appendPath("primary:A\u200Bndroid/" + segments[1]);
+            if (SPUtils.getUseNewDocument()) {
+                uriBuilder.appendPath("primary:A\u200Bndroid/" + segments[1]);
+            } else {
+                uriBuilder.appendPath("primary:Android/" + segments[1] + "/" + segments[2]);
+            }
         } else {
             uriBuilder.appendPath("primary:Android/" + segments[1]);
         }
         uriBuilder.appendPath("document");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU && SPUtils.getUseNewDocument()) {
             uriBuilder.appendPath("primary:A\u200Bndroid/" + halfPath.replace("Android/", ""));
         } else {
             uriBuilder.appendPath("primary:" + halfPath);
